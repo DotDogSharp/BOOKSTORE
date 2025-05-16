@@ -30,18 +30,8 @@
         <div>
             <div class="row">
                 <div class="col-md-3">
-                    <div class="title">CHỦ ĐỀ SÁCH</div>
-                    <ul class="list-group">
-                        <li class="list-group-item">First category</li>
-                        <li class="list-group-item">Second category</li>
-                        <li class="list-group-item">Third category</li>
-                    </ul>
-                    <div class="title">NHÀ XUẤT BẢN</div>
-                    <ul class="list-group">
-                        <li class="list-group-item">First category</li>
-                        <li class="list-group-item">Second category</li>
-                        <li class="list-group-item">Third category</li>
-                    </ul>
+                    @Html.Action("LayChuDe", "BookStore")
+                    @Html.Action("LayNhaXuatBan", "BookStore")
                 </div>
                 <div class="col-md-9">
                     <img style="width:100%;" src="~/Images/banner.jpg" />
