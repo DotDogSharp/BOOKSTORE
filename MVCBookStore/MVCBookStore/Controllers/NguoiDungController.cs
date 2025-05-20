@@ -76,7 +76,9 @@ namespace MVCBookStore.Controllers
                     {
                         ViewBag.ThongBao = "Chúc mừng đăng nhập thành công";
                         //Lưu vào session
-                        Session["TaiKhoan"] = khach;
+                        //Session["TaiKhoan"] = khach;
+                        Session["User"] = khach;
+
                     }
                     else
                         ViewBag.ThongBao = "Tên đăng nhập hoặc mật khẩu không đúng";
@@ -84,6 +86,11 @@ namespace MVCBookStore.Controllers
 
             }
             return View();
+        }
+        public ActionResult Dangxuat()
+        {
+            Session["User"] = null;
+            return View("DangNhap");
         }
     }
 }
