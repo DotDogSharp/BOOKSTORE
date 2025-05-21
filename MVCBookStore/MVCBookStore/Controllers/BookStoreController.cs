@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using PagedList;
 
 namespace MVCBookStore.Controllers
 {
@@ -20,11 +21,16 @@ namespace MVCBookStore.Controllers
         }
 
         // GET: BookStore 
-        public ActionResult Index()
+        public ActionResult Index(int? page)
         {
-            // Giả sử cần lấy 5 quyển sách mới cập nhật 
-            var dsSachMoi = LaySachMoi(5);
-            return View(dsSachMoi);
+            //Tạo biến cho biết số sách mỗi trang
+            int pageSize = 5;
+            //Tạo biến số trang
+            int pageNum = (page ?? 1);
+
+            //Giả sử cần lấy 15 quyển sách mới cập nhật
+            var dsSachMoi = LaySachMoi(15);
+            return View(dsSachMoi.ToPagedList(pageNum, pageSize ));
         }
         public ActionResult LayChuDe()
         {
