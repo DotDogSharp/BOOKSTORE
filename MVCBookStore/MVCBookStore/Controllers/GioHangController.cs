@@ -1,6 +1,7 @@
 ﻿using MVCBookStore.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -111,5 +112,59 @@ namespace MVCBookStore.Controllers
             }
             return RedirectToAction("HienThiGioHang"); //Quay về trang giỏ hàng
         }
+        public ActionResult DatHang()
+        {
+            if (Session["User"] == null) //Chưa đăng nhập
+                return RedirectToAction("DangNhap", "NguoiDung");
+            List<MatHangMua> gioHang = LayGioHang();
+            if (gioHang == null || gioHang.Count == 0) //Chưa có giỏ hàng hoặc chưa có sản phẩm
+                return RedirectToAction("Index", "BookStore");
+
+            ViewBag.TongSL = TinhTongSL();
+            ViewBag.TongTien = TinhTongTien();
+            return View(gioHang); //Trả về View hiển thị thông tin giỏ hàng
+        }
+        QLBANSACHEntities1 database = new QLBANSACHEntities1(); 
+        //Xác nhận đơn và lưu vào csdl
+        public ActionResult DongYDatHang()
+        {
+            KHACHHANG khach = Session["User"] as KHACHHANG; //Khách
+            List<MatHangMua> gioHang = LayGioHang(); //Giỏ hàng
+
+            DONDATHANG DonHang = new DONDATHANG(); //Tạo mới đơn đặt hàng
+            DonHang.MaKH = khach.MaKH;
+            DonHang.NgayDH = DateTime.Now;
+            DonHang.Trigia = (decimal)TinhTongTien();
+            DonHang.Dagiao = false;
+            DonHang.Tennguoinhan = khach.HoTenKH;
+            DonHang.Diachinhan = khach.DiachiKH;
+            DonHang.Dienthoainhan = khach.DienthoaiKH;
+            DonHang.HTThanhtoan = false;
+            DonHang.HTGiaohang = false;
+
+            database.DONDATHANGs.Add(DonHang);
+            database.SaveChanges();
+
+            //Lần lượt thêm từng chi tiết cho đơn hàng trên
+            foreach(var sanpham in gioHang)
+            {
+                CTDATHANG chitiet = new CTDATHANG();
+                chitiet.SoDH = DonHang.SoDH;
+                chitiet.Masach = sanpham.MaSach;
+                chitiet.Soluong = sanpham.SoLuong;
+                chitiet.Dongia = (decimal)sanpham.DonGia;
+                database.CTDATHANGs.Add(chitiet);
+            }    
+            database.SaveChanges();
+
+            //Xóa giỏ hàng
+            Session["GioHang"] = null;
+            return RedirectToAction("HoanThanhDonHang");
+        }
+        public ActionResult HoanThanhDonHang()
+        {
+            return View();
+        }
+
     }
 }
